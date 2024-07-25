@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bongtube</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .trending-label {
+            display: flex;
+            align-items: center;
+
+            font-size: 24px; /* Kích thước chữ */
+            color: var(--text-color); /* Màu chữ */
+
+        }
+
+        .trending-icon {
+            width: 38px; /* Kích thước hình ảnh */
+            height: 38px; /* Kích thước hình ảnh */
+            margin-right: 8px; /* Khoảng cách giữa biểu tượng và chữ */
+            border-radius: 50%;
+            margin-left: 40px;
+        }
+    </style>
+
+</head>
+
+<body>
+<div th:replace="~{layout/nav :: nav}"></div>
+<section class="home" style="height: auto">
+    <div th:replace="~{layout/header :: header}"></div>
+    <div class="main">
+        <div class="container-fluid">
+            <div class="row p-3">
+                <p class="trending-label">
+
+                    <img src="/images/icons8-fire.gif" alt="Hot Deal Icon" class="trending-icon"> Thịnh hành
+                </p>
+              <div class="col-sm-8 " style="margin-left: 30px">
+
+                    <div class="list-video mt-3">
+                        <div class="row p-1" th:each="video : ${topVideos}">
+                            <!-- Thay đổi đoạn này để lặp qua danh sách các video -->
+                            <div class="col-sm-3 p-2">
+                                <a th:href="@{'/user_video/watch/' + ${video.videoId}}"><img
+                                        th:src="${video.thumbnailUrl}" alt="" width="100%" style="border-radius: 6px;"></a>
+
+                            </div>
+
+                            <div class="col-sm-9 p-0 mt-2">
+                                <h5 class="video-oder-title" th:text="${video.title}"></h5>
+                                <h5 class="video-oder-youtube" th:text="${video.user.fullName}"></h5>
+                                <h5 class="video-oder-view" th:text="${video.viewsCount} "></h5>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const message = /*[[${message}]]*/ null;
+    const text = /*[[${text}]]*/ null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (message === "success" && text !== null) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: text,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } else if (message === "error" && text !== null) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: text,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    });
+    /*]]>*/
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Lấy tất cả các phần tử có class 'created-at'
+        const elements = document.querySelectorAll('.created-at');
+
+        elements.forEach(element => {
+            // Lấy giá trị thời gian tạo từ thuộc tính data
+            const createdAt = new Date(element.getAttribute('data-created-at'));
+            const now = new Date();
+            const diffTime = Math.abs(now - createdAt);
+            const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const diffMonths = now.getMonth() - createdAt.getMonth() + (12 * (now.getFullYear() - createdAt.getFullYear()));
+            const diffYears = now.getFullYear() - createdAt.getFullYear();
+
+            let formattedTime = '';
+
+            if (diffHours < 24) {
+                formattedTime = 'Đăng lúc ' + createdAt.getHours() + ':' + ('0' + createdAt.getMinutes()).slice(-2);
+            } else if (diffDays < 30) {
+                formattedTime = diffDays + ' ngày trước';
+            } else if (diffMonths < 12) {
+                formattedTime = diffMonths + ' tháng trước';
+            } else {
+                formattedTime =diffYears + ' năm trước';
+            }
+
+            // Gán giá trị định dạng lại cho phần tử
+            element.innerText = formattedTime;
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+<script src="/js/script.js"></script>
+
+
+</body>
+
+</html>
